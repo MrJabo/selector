@@ -55,6 +55,8 @@ class Controller:
     self.root.bind("i", self.show_info)
     self.root.bind("w", self.copy_files)
     self.root.bind("h", self.show_help)
+    self.root.bind("r", self.start_range)
+    self.root.bind("e", self.end_range)
     #self.img.grid(column=0, row=0)
     self.root.geometry("1024x712")
     self.img.bd = self.bordersize
@@ -143,9 +145,25 @@ up arrow - keep the current image (i.e. copy it when \'w\' is used)\n
 down arrow - do not keep the current image (i.e. do not copy it)\n
 i - get information about the current image\n
 w - copy files as selected\n
+r - set beginning of range selection (handle all images in range the same in one action)\n
+e - set end of range selection (decide if all images in range are kept)\n
 h - print help
     '''
     messagebox.showinfo("Help", helpstring)
+  
+  def start_range(self, event):
+    self.range_index = self.current
+
+  def end_range(self, event):
+    if not self.range_index is None:
+      start = self.range_index
+      end = self.current
+      result = messagebox.askyesnocancel("Range selected", "You selected "+str(end+1-start)+" images in a range. Do you want to keep these images? If you choose 'Cancel' the range selection is aborted.")
+      if not result is None:
+        for index in range(start, end+1):
+            self.imgs[index][1] = result
+            self.imgs[index][2] = True
+    self.present_image(self.current)
 
 # Argumentparsing
 
@@ -157,6 +175,8 @@ up arrow         - keep the current image (i.e. copy it when \'w\' is used)\n
 down arrow       - do not keep the current image (i.e. do not copy it)\n
 i                - get information about the current image\n
 w                - copy files as selected\n
+r                - set beginning of range selection (handle all images in range the same in one action)\n
+e                - set end of range selection (decide if all images in range are kept)\n
 h                - print help\n
 ''')
 
